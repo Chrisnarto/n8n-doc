@@ -1,15 +1,17 @@
-FROM node:18-bullseye
+# Imagen oficial de n8n (Debian)
+FROM n8nio/n8n:latest
 
+# Cambiar a root para instalar paquetes
+USER root
+
+# Instalar FFmpeg
 RUN apt-get update && apt-get install -y ffmpeg && apt-get clean
 
-WORKDIR /app
+# Regresar a usuario original
+USER node
 
-RUN npm install -g n8n
-
-RUN mkdir /data
-ENV N8N_USER_FOLDER=/data
-
+# Mantener configuraciones previas
+WORKDIR /data
 EXPOSE 5678
 
-ENTRYPOINT ["n8n"]
-CMD ["start"]
+CMD ["n8n"]
