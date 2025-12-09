@@ -1,17 +1,11 @@
-# Imagen oficial de n8n (Debian)
-FROM n8nio/n8n:latest
+# Usa la imagen oficial de n8n
+FROM n8nio/n8n:latest-ffmpeg
 
-# Cambiar a root para instalar paquetes
-USER root
-
-# Instalar FFmpeg
-RUN apt-get update && apt-get install -y ffmpeg && apt-get clean
-
-# Regresar a usuario original
-USER node
-
-# Mantener configuraciones previas
+# Establece directorio de trabajo
 WORKDIR /data
+
+# Expone el puerto
 EXPOSE 5678
 
+# Comando por defecto
 CMD ["n8n"]
