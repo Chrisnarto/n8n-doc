@@ -1,35 +1,23 @@
 # Usa la imagen oficial de n8n
 FROM n8nio/n8n:latest
 
-# Cambiamos a root para instalar dependencias
+# Cambiamos al usuario root temporalmente porque n8n usa usuario sin permisos
 USER root
 
 # Instalar FFmpeg en Alpine
-RUN apk update && apk add --no-cache ffmpeg git build-base curl
+RUN apk update && apk add --no-cache ffmpeg
 
-# Crear carpeta para whisper.cpp
-RUN mkdir -p /whisper
-
-# Clonar Whisper.cpp
-RUN git clone https://github.com/ggerganov/whisper.cpp /whisper
-
-# Compilar Whisper.cpp
-RUN cd /whisper && make
-
-# Descargar un modelo pequeño (base) para transcribir
-RUN cd /whisper && \
-    curl -L -o ggml-base.bin https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-base.bin
-
-# Regresar al usuario de n8n
+# Regresar al usuario original de n8n
 USER node
 
-# Directorio de trabajo
+# Establece directorio de trabajo
 WORKDIR /data
 
-# Dar permisos
-RUN mkdir -p /data && chmod -R 777 /data /whisper
+RUN mkdir -p /data \
+    # Dar permisos de escritura a todos los usuarios
+    && chmod -R 777 /data
 
-# Exponer puerto
+# Expone el puerto
 EXPOSE 5678
 
 # Comando por defecto
